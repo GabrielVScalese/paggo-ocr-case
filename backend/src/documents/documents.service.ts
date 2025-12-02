@@ -58,17 +58,6 @@ export class DocumentsService {
       }
     }
   */
-    // --- ETAPA 3: Salvar no Banco (Workaround para User) ---
-    // Como ainda não temos Login, garantimos que existe um usuário "padrão"
-    let user = await this.prisma.user.findFirst();
-    if (!user) {
-      user = await this.prisma.user.create({
-        data: {
-          email: 'demo@paggo.com',
-          password: 'senha-temporaria',
-        },
-      });
-    }
 
     // --- ETAPA 4: Persistência ---
     // Salva tudo na tabela Document
@@ -78,7 +67,7 @@ export class DocumentsService {
         fileUrl: file.path, // Caminho no disco
         extractedText: extractedText,
         llmSummary: llmSummary,
-        userId: user.id,
+        userId: userId,
       },
     });
   }
