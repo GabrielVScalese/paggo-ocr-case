@@ -8,6 +8,8 @@ import {
   Req,
   Param,
   Body,
+  Res,
+  HttpStatus,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { DocumentsService } from './documents.service';
@@ -15,6 +17,7 @@ import { diskStorage } from 'multer';
 import { extname } from 'path';
 import { AuthGuard } from '@nestjs/passport';
 import { DocumentQueryDto } from './dto/document-query.dto';
+import express from 'express';
 
 @Controller('documents')
 export class DocumentsController {
@@ -68,5 +71,30 @@ export class DocumentsController {
       userId,
       queryDto.question,
     );
+  }
+
+  @Get(':id/download') // GET /documents/UUID-DO-DOC/download
+  @UseGuards(AuthGuard('jwt'))
+  async download(
+    @Param('id') documentId: string,
+    @Req() req,
+    @Res() res: express.Response, // Injetar o objeto de resposta
+  ) {
+    const userId = req.user.id;
+
+    // 1. Obter o conteúdo
+    const downloadData = await this.documentsService.downloadDocument(
+      documentId,
+      userId,
+    );
+
+    // 2. Configurar os cabeçalhos para forçar o download no navegador
+    res.set({
+      'Content-Type': 'text/plain', // Tipo do arquivo que está sendo enviado
+      'Content-Disposition': `attachment; filename="${downloadData.filename}"`, // Força o download com o nome
+    });
+
+    // 3. Enviar o conteúdo de volta
+    res.status(HttpStatus.OK).send(downloadData.content);
   }
 }

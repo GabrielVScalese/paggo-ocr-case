@@ -145,4 +145,42 @@ export class DocumentsService {
       },
     });
   }
+
+  async downloadDocument(documentId: string, userId: string) {
+    // 1. Buscar o Documento no Banco (Verificação de Acesso)
+    const document = await this.prisma.document.findFirst({
+      where: {
+        id: documentId,
+        userId: userId,
+      },
+    });
+
+    if (!document) {
+      throw new NotFoundException('Documento não encontrado ou acesso negado.');
+    }
+
+    // 2. Criar o Conteúdo do Arquivo de Anexos
+    const fileContent = `--- DOCUMENTO ORIGINAL: ${document.filename} ---
+
+[Caminho do Arquivo Original: ${document.fileUrl}]
+[Data de Upload: ${document.createdAt.toLocaleString()}]
+
+-------------------------------------------------------------------
+|  RESUMO DA INTELIGÊNCIA ARTIFICIAL (LLM)  |
+-------------------------------------------------------------------
+${document.llmSummary || 'Resumo não disponível.'}
+
+-------------------------------------------------------------------
+|  TEXTO BRUTO EXTRAÍDO POR OCR  |
+-------------------------------------------------------------------
+${document.extractedText || 'Texto bruto não disponível.'}
+`;
+
+    // 3. Retornar o Conteúdo e os Metadados para o Controller
+    return {
+      filename: `${document.filename}_analise.txt`,
+      content: fileContent,
+      originalFilePath: document.fileUrl,
+    };
+  }
 }
