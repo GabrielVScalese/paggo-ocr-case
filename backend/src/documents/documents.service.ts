@@ -1,6 +1,6 @@
 // ARQUIVO: src/documents/documents.service.ts
 
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import * as Tesseract from 'tesseract.js'; // O pacote de OCR
 import OpenAI from 'openai'; // O pacote da IA
@@ -30,6 +30,65 @@ export class DocumentsService {
         // Não incluir o 'extractedText' completo na lista para manter a resposta leve
       },
     });
+  }
+
+  async queryDocument(documentId: string, userId: string, question: string) {
+    // 1. Buscar o Documento no Banco
+    // Garantir que o documento existe E pertence ao usuário autenticado (Segurança!)
+    const document = await this.prisma.document.findFirst({
+      where: {
+        id: documentId,
+        userId: userId,
+      },
+    });
+
+    if (!document) {
+      throw new NotFoundException('Documento não encontrado ou acesso negado.');
+    }
+
+    // 2. Preparar o Prompt para a IA
+    const context = document.extractedText;
+
+    if (!context) {
+      return {
+        answer:
+          'O texto do documento não foi extraído. Não é possível responder.',
+      };
+    }
+
+    // 3. Chamar a IA com a Pergunta e o Contexto
+    if (!process.env.OPENAI_API_KEY) {
+      return { answer: 'LLM desativado. Chave de API não configurada.' };
+    }
+
+    try {
+      const completion = await this.openai.chat.completions.create({
+        messages: [
+          {
+            role: 'system',
+            content: `És um assistente analítico. Responde à pergunta do usuário APENAS com base no seguinte texto do documento: ${context}`,
+          },
+          {
+            role: 'user',
+            content: question,
+          },
+        ],
+        model: 'gpt-3.5-turbo',
+      });
+
+      const answer =
+        completion.choices[0].message.content ||
+        'A IA não conseguiu gerar uma resposta.';
+
+      return {
+        documentId,
+        question,
+        answer,
+      };
+    } catch (error) {
+      console.error('Erro na OpenAI durante a query:', error);
+      throw new Error('Falha ao processar a consulta LLM.');
+    }
   }
 
   async create(file: Express.Multer.File, userId: string) {

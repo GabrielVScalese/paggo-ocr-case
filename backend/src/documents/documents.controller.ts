@@ -6,12 +6,15 @@ import {
   UseGuards,
   Get,
   Req,
+  Param,
+  Body,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { DocumentsService } from './documents.service';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
 import { AuthGuard } from '@nestjs/passport';
+import { DocumentQueryDto } from './dto/document-query.dto';
 
 @Controller('documents')
 export class DocumentsController {
@@ -49,5 +52,21 @@ export class DocumentsController {
 
     // 2. Passa o ID REAL para o serviço
     return this.documentsService.create(file, userId);
+  }
+
+  @Post(':id/query') // Rota: POST /documents/UUID-DO-DOC/query
+  @UseGuards(AuthGuard('jwt'))
+  async query(
+    @Param('id') documentId: string,
+    @Body() queryDto: DocumentQueryDto,
+    @Req() req,
+  ) {
+    const userId = req.user.id;
+
+    return this.documentsService.queryDocument(
+      documentId,
+      userId,
+      queryDto.question,
+    );
   }
 }
