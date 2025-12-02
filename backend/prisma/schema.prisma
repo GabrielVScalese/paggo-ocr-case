@@ -1,0 +1,32 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite" // Ou "postgresql" se você mudou
+  url      = env("DATABASE_URL")
+}
+
+// Modelo de Usuário (Necessário para o requisito de Autenticação [cite: 13])
+model User {
+  id        String     @id @default(uuid())
+  email     String     @unique
+  password  String     // Senha criptografada
+  documents Document[] // Um usuário pode ter vários documentos
+  createdAt DateTime   @default(now())
+}
+
+// Modelo de Documento (Necessário para OCR e LLM [cite: 4, 12])
+model Document {
+  id            String   @id @default(uuid())
+  filename      String   // Nome original do arquivo
+  fileUrl       String   // Caminho onde a imagem foi salva
+  extractedText String?  // Texto extraído pelo OCR (pode ser longo)
+  llmSummary    String?  // Explicação gerada pelo GPT-4
+  
+  // Relacionamento com o Usuário
+  userId        String
+  user          User     @relation(fields: [userId], references: [id])
+  
+  createdAt     DateTime @default(now())
+}
