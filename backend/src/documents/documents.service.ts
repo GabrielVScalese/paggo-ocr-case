@@ -17,6 +17,21 @@ export class DocumentsService {
     });
   }
 
+  async findAll(userId: string) {
+    return this.prisma.document.findMany({
+      where: { userId },
+      orderBy: { createdAt: 'desc' }, // Opcional: ordenar do mais recente para o mais antigo
+      select: {
+        // Opcional: Selecionar apenas campos relevantes para a listagem
+        id: true,
+        filename: true,
+        createdAt: true,
+        llmSummary: true,
+        // Não incluir o 'extractedText' completo na lista para manter a resposta leve
+      },
+    });
+  }
+
   async create(file: Express.Multer.File, userId: string) {
     console.log(`1. Iniciando processamento do arquivo: ${file.filename}`);
 
