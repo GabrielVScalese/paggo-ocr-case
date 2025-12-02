@@ -14,6 +14,7 @@ export class DocumentsService {
     // Nota: Se não tiveres chave, o código vai falhar na parte do GPT
     this.openai = new OpenAI({
       apiKey: process.env.OPENAI_API_KEY,
+      baseURL: 'https://api.groq.com/openai/v1',
     });
   }
 
@@ -73,7 +74,7 @@ export class DocumentsService {
             content: question,
           },
         ],
-        model: 'gpt-3.5-turbo',
+        model: 'llama-3.1-8b-instant',
       });
 
       const answer =
@@ -109,7 +110,7 @@ export class DocumentsService {
     let llmSummary = 'Não foi possível gerar o resumo (Sem chave API).';
 
     // Só chamamos a OpenAI se a chave estiver configurada para evitar erros
-    /*if (process.env.OPENAI_API_KEY) {
+    if (process.env.OPENAI_API_KEY) {
       try {
         const completion = await this.openai.chat.completions.create({
           messages: [
@@ -120,7 +121,7 @@ export class DocumentsService {
             },
             { role: 'user', content: extractedText },
           ],
-          model: 'gpt-3.5-turbo', // Podes usar "gpt-3.5-turbo" se quiseres poupar créditos
+          model: 'llama-3.1-8b-instant', // Podes usar "gpt-3.5-turbo" se quiseres poupar créditos
         });
         llmSummary =
           completion.choices[0].message.content ||
@@ -131,7 +132,6 @@ export class DocumentsService {
         llmSummary = 'Erro ao contactar a IA.';
       }
     }
-  */
 
     // --- ETAPA 4: Persistência ---
     // Salva tudo na tabela Document
