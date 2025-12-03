@@ -36,18 +36,28 @@ export default function DocumentDetail() {
   const handleDownload = async () => {
     try {
       const response = await api.get(`/documents/${id}/download`, {
-        responseType: "blob",
+        responseType: "blob", // Importante: diz que esperamos um arquivo binário
       });
-      // Cria um link temporário para forçar o download no navegador
-      const url = window.URL.createObjectURL(new Blob([response.data]));
+
+      // Cria um objeto URL para o PDF
+      const url = window.URL.createObjectURL(
+        new Blob([response.data], { type: "application/pdf" })
+      );
+
       const link = document.createElement("a");
       link.href = url;
-      link.setAttribute("download", "analise_paggo.txt");
+
+      // MUDANÇA: Extensão .pdf aqui
+      link.setAttribute("download", "relatorio_paggo.pdf");
+
       document.body.appendChild(link);
       link.click();
+
+      // Limpeza
       link.remove();
+      window.URL.revokeObjectURL(url);
     } catch (error) {
-      alert("Erro ao fazer download.");
+      alert("Erro ao fazer download do PDF.");
     }
   };
 
@@ -65,9 +75,9 @@ export default function DocumentDetail() {
           <h1 className="text-2xl font-bold">Chat com o Documento</h1>
           <button
             onClick={handleDownload}
-            className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 font-bold text-sm"
+            className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 font-bold text-sm"
           >
-            📥 Baixar Ficheiro Completo
+            📄 Baixar PDF
           </button>
         </div>
 

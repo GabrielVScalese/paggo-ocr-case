@@ -4,6 +4,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import * as Tesseract from 'tesseract.js'; // O pacote de OCR
 import OpenAI from 'openai'; // O pacote da IA
+import { generateDocumentReport } from 'src/utils/pdf-generator.util';
 
 @Injectable()
 export class DocumentsService {
@@ -147,40 +148,28 @@ export class DocumentsService {
   }
 
   async downloadDocument(documentId: string, userId: string) {
-    // 1. Buscar o Documento no Banco (Verificação de Acesso)
+    // 1. Busca os dados (Responsabilidade do Service: Acesso a Dados)
     const document = await this.prisma.document.findFirst({
-      where: {
-        id: documentId,
-        userId: userId,
-      },
+      where: { id: documentId, userId: userId },
     });
 
     if (!document) {
-      throw new NotFoundException('Documento não encontrado ou acesso negado.');
+      throw new NotFoundException('Documento não encontrado.');
     }
 
-    // 2. Criar o Conteúdo do Arquivo de Anexos
-    const fileContent = `--- DOCUMENTO ORIGINAL: ${document.filename} ---
+    // 2. Gera o PDF (Responsabilidade do Utilitário: Apresentação)
+    const pdfBuffer = await generateDocumentReport({
+      filename: document.filename,
+      createdAt: document.createdAt,
+      id: document.id,
+      llmSummary: document.llmSummary,
+      extractedText: document.extractedText,
+    });
 
-[Caminho do Arquivo Original: ${document.fileUrl}]
-[Data de Upload: ${document.createdAt.toLocaleString()}]
-
--------------------------------------------------------------------
-|  RESUMO DA INTELIGÊNCIA ARTIFICIAL (LLM)  |
--------------------------------------------------------------------
-${document.llmSummary || 'Resumo não disponível.'}
-
--------------------------------------------------------------------
-|  TEXTO BRUTO EXTRAÍDO POR OCR  |
--------------------------------------------------------------------
-${document.extractedText || 'Texto bruto não disponível.'}
-`;
-
-    // 3. Retornar o Conteúdo e os Metadados para o Controller
+    // 3. Retorna o resultado
     return {
-      filename: `${document.filename}_analise.txt`,
-      content: fileContent,
-      originalFilePath: document.fileUrl,
+      filename: `${document.filename}_analise.pdf`,
+      content: pdfBuffer,
     };
   }
 }
