@@ -23,18 +23,16 @@ import express from 'express';
 export class DocumentsController {
   constructor(private readonly documentsService: DocumentsService) {}
 
-  @Get() // GET /documents
-  @UseGuards(AuthGuard('jwt')) // Protegido!
+  @Get()
+  @UseGuards(AuthGuard('jwt'))
   findAll(@Req() req) {
-    // Pega o ID do usuário que o JWT validou
     const userId = req.user.id;
 
-    // Chama o novo método com o ID do usuário
     return this.documentsService.findAll(userId);
   }
 
   @Post('upload')
-  @UseGuards(AuthGuard('jwt')) // Garante que a requisição tem um req.user válido
+  @UseGuards(AuthGuard('jwt'))
   @UseInterceptors(
     FileInterceptor('file', {
       storage: diskStorage({
@@ -48,16 +46,14 @@ export class DocumentsController {
       }),
     }),
   )
-  // Recebe o arquivo E o objeto de Requisição
   create(@UploadedFile() file: Express.Multer.File, @Req() req) {
-    // 1. Extrai o ID REAL do objeto de requisição (req.user foi populado pelo JWT)
+    // req.user foi populado pelo JWT
     const userId = req.user.id;
 
-    // 2. Passa o ID REAL para o serviço
     return this.documentsService.create(file, userId);
   }
 
-  @Post(':id/query') // Rota: POST /documents/UUID-DO-DOC/query
+  @Post(':id/query')
   @UseGuards(AuthGuard('jwt'))
   async query(
     @Param('id') documentId: string,
@@ -73,28 +69,26 @@ export class DocumentsController {
     );
   }
 
-  @Get(':id/download') // GET /documents/UUID-DO-DOC/download
+  @Get(':id/download')
   @UseGuards(AuthGuard('jwt'))
   async download(
     @Param('id') documentId: string,
     @Req() req,
-    @Res() res: express.Response, // Injetar o objeto de resposta
+    @Res() res: express.Response,
   ) {
     const userId = req.user.id;
 
-    // 1. Obter o conteúdo
     const downloadData = await this.documentsService.downloadDocument(
       documentId,
       userId,
     );
 
-    // 2. Configurar os cabeçalhos para forçar o download no navegador
+    // Configurar os cabeçalhos para forçar o download no navegador
     res.set({
       'Content-Type': 'text/plain', // Tipo do arquivo que está sendo enviado
       'Content-Disposition': `attachment; filename="${downloadData.filename}"`, // Força o download com o nome
     });
 
-    // 3. Enviar o conteúdo de volta
     res.status(HttpStatus.OK).send(downloadData.content);
   }
 }

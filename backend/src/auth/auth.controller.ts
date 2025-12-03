@@ -1,5 +1,3 @@
-// src/auth/auth.controller.ts
-
 import { Controller, Post, Body, UnauthorizedException } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
@@ -16,7 +14,6 @@ export class AuthController {
 
   @Post('login')
   async login(@Body() loginDto: LoginDto) {
-    // 1. Valida se o usuário e senha estão corretos
     const user = await this.authService.validateUser(
       loginDto.email,
       loginDto.password,
@@ -26,7 +23,6 @@ export class AuthController {
       throw new UnauthorizedException('Credenciais inválidas.');
     }
 
-    // 2. Chama o método login (que gera o JWT)
     return this.authService.login(user);
   }
 }

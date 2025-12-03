@@ -1,8 +1,6 @@
-// ARQUIVO: src/utils/pdf-generator.util.ts
-
 import PDFDocument = require('pdfkit');
 
-// Definimos uma interface para saber exatamente o que o gerador precisa
+// Interface para saber exatamente o que o gerador precisa
 interface PdfData {
   filename: string;
   createdAt: Date;
@@ -13,16 +11,13 @@ interface PdfData {
 
 export async function generateDocumentReport(data: PdfData): Promise<Buffer> {
   return new Promise((resolve, reject) => {
-    // 1. Cria o documento
     const doc = new PDFDocument({ margin: 50 });
     const buffers: Buffer[] = [];
 
-    // 2. Captura os dados do stream
+    // Captura os dados do stream
     doc.on('data', (chunk) => buffers.push(chunk));
     doc.on('end', () => resolve(Buffer.concat(buffers)));
     doc.on('error', (err) => reject(err));
-
-    // --- INÍCIO DO DESENHO DO PDF ---
 
     // Cabeçalho
     doc
@@ -44,7 +39,7 @@ export async function generateDocumentReport(data: PdfData): Promise<Buffer> {
     doc.moveTo(50, doc.y).lineTo(550, doc.y).strokeColor('#aaaaaa').stroke();
     doc.moveDown(2);
 
-    // Seção 1: Resumo IA
+    // Resumo IA
     doc.fillColor('black');
     doc
       .fontSize(14)
@@ -60,11 +55,11 @@ export async function generateDocumentReport(data: PdfData): Promise<Buffer> {
       });
     doc.moveDown(2);
 
-    // Seção 2: Texto Extraído
+    // Texto Extraído
     doc.fontSize(14).font('Helvetica-Bold').text('2. Texto Extraído (OCR)');
     doc.moveDown(0.5);
 
-    // Usamos uma fonte monoespaçada (Courier) para o OCR parecer "código" ou texto bruto
+    // Uso de fonte monoespaçada (Courier) para o OCR parecer texto bruto
     doc
       .fontSize(10)
       .font('Courier')
@@ -72,11 +67,6 @@ export async function generateDocumentReport(data: PdfData): Promise<Buffer> {
         align: 'justify',
       });
 
-    // Rodapé simples
-    const pageCount = doc.bufferedPageRange().count;
-    // Nota: paginação automática no pdfkit é mais complexa, deixaremos simples por enquanto.
-
-    // Finaliza o documento
     doc.end();
   });
 }

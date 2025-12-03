@@ -1,10 +1,9 @@
-// ARQUIVO: src/auth/jwt.strategy.ts
-
-import { ExtractJwt, Strategy } from 'passport-jwt'; // <-- GARANTA QUE ESSES ESTÃO AQUI
+import { ExtractJwt, Strategy } from 'passport-jwt';
 import { PassportStrategy } from '@nestjs/passport';
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 
+// Essa classe garante uma camada de proteção sobre rotas que requerem autenticação
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(private prisma: PrismaService) {
@@ -15,18 +14,15 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     }
 
     super({
-      // 1. Diz ao Passport onde encontrar o token (no cabeçalho Bearer)
+      // Diz ao Passport onde encontrar o token (no cabeçalho Bearer)
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-      // 2. Não ignora a expiração do token (Segurança!)
       ignoreExpiration: false,
-      // 3. Chave Secreta para verificar a assinatura do token
       secretOrKey: secret,
     });
   }
 
-  // Se o token for válido, este método é chamado com o payload decifrado.
   async validate(payload: { email: string; sub: string }) {
-    // sub é o ID do usuário (definido no Auth Service)
+    // sub é o ID do usuário
     const user = await this.prisma.user.findUnique({
       where: { id: payload.sub },
     });

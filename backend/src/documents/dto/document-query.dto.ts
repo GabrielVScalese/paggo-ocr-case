@@ -1,5 +1,6 @@
 import { IsString, IsNotEmpty, MinLength } from 'class-validator';
 
+// Garante que uma requisição recebida com o campo question siga tais determinações
 export class DocumentQueryDto {
   @IsString()
   @IsNotEmpty()
