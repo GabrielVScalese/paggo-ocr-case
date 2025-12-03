@@ -13,10 +13,9 @@ export default function RegisterPage() {
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      // Chama a rota de criação de utilizador do NestJS
       await api.post("/auth/register", { email, password });
       alert("Conta criada com sucesso! Faça login.");
-      router.push("/"); // Manda de volta para o login
+      router.push("/");
     } catch (err) {
       alert("Erro ao criar conta. Tente outro email.");
     }

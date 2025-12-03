@@ -1,10 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import api from "@/services/api"; // Importa da raiz
-import { useAuth } from "@/context/AuthContext"; // Importa da raiz
+import api from "@/services/api";
+import { useAuth } from "@/context/AuthContext";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
   const { login } = useAuth();
@@ -15,11 +14,8 @@ export default function LoginPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      // 1. Envia email/senha para o NestJS
       const response = await api.post("/auth/login", { email, password });
 
-      // 2. Se der certo, pega o token e manda para o Contexto
-      // O Contexto vai salvar no cookie e redirecionar para o Dashboard
       login(response.data.access_token);
     } catch (err) {
       setError("Falha no login. Verifique as credenciais.");

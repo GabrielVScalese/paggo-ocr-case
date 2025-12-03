@@ -3,8 +3,6 @@
 import { createContext, useState, useEffect, useContext } from "react";
 import { useRouter } from "next/navigation";
 import Cookies from "js-cookie";
-// O '@/' aponta para a raiz agora
-import api from "@/services/api";
 
 interface AuthContextProps {
   isAuthenticated: boolean;

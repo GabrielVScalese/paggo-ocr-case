@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import api from "@/services/api";
 import { useParams, useRouter } from "next/navigation";
 
-// Definimos a interface para sabermos o que esperar do documento
 interface DocumentDetail {
   id: string;
   filename: string;
@@ -17,7 +16,6 @@ export default function DocumentDetail() {
   const { id } = useParams();
   const router = useRouter();
 
-  // Estado para guardar os dados do documento
   const [documentData, setDocumentData] = useState<DocumentDetail | null>(null);
 
   const [question, setQuestion] = useState("");
@@ -26,12 +24,10 @@ export default function DocumentDetail() {
   );
   const [loadingAnswer, setLoadingAnswer] = useState(false);
 
-  // 1. Efeito para carregar os detalhes do documento
+  // Carregar os detalhes do documento
   useEffect(() => {
     const fetchDocumentDetails = async () => {
       try {
-        // Como ainda não criamos uma rota específica GET /documents/:id no backend,
-        // buscamos a lista e filtramos localmente (funciona bem para protótipos).
         const res = await api.get("/documents");
         const foundDoc = res.data.find((doc: DocumentDetail) => doc.id === id);
 
@@ -72,9 +68,11 @@ export default function DocumentDetail() {
       const response = await api.get(`/documents/${id}/download`, {
         responseType: "blob",
       });
+      // Essa url serve para acessar o Blob (arquivo) criado na memória do navegador
       const url = window.URL.createObjectURL(
         new Blob([response.data], { type: "application/pdf" })
       );
+      // Cria-se um link para forçar o download
       const link = document.createElement("a");
       link.href = url;
       link.setAttribute(
@@ -92,7 +90,6 @@ export default function DocumentDetail() {
   return (
     <div className="min-h-screen bg-gray-50 p-8 text-black">
       <div className="max-w-4xl mx-auto">
-        {/* Botão Voltar */}
         <button
           onClick={() => router.back()}
           className="mb-4 text-gray-500 hover:text-black font-medium flex items-center gap-2"
@@ -100,7 +97,6 @@ export default function DocumentDetail() {
           <span>←</span> Voltar para a lista
         </button>
 
-        {/* Cabeçalho */}
         <div className="flex justify-between items-center mb-6">
           <div>
             <h1 className="text-3xl font-bold text-gray-800">
@@ -121,7 +117,6 @@ export default function DocumentDetail() {
           </button>
         </div>
 
-        {/* --- NOVA SEÇÃO: Resumo da IA --- */}
         <div className="bg-white p-6 rounded shadow border-l-4 border-purple-500 mb-8">
           <h2 className="text-xl font-bold mb-4 text-gray-800 flex items-center gap-2">
             🤖 Resumo Completo da Análise
@@ -138,7 +133,6 @@ export default function DocumentDetail() {
           </div>
         </div>
 
-        {/* Área de Chat */}
         <div className="bg-white p-6 rounded shadow min-h-[400px] mb-4 flex flex-col gap-4 border border-gray-200">
           <h2 className="text-xl font-bold text-gray-800 border-b pb-2">
             💬 Chat Interativo
@@ -169,7 +163,6 @@ export default function DocumentDetail() {
           ))}
         </div>
 
-        {/* Input */}
         <div className="flex gap-2 bg-white p-2 rounded shadow border border-gray-200">
           <input
             className="flex-1 border-none p-3 outline-none focus:ring-0 text-gray-700"

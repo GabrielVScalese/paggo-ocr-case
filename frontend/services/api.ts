@@ -1,7 +1,6 @@
 import axios from "axios";
 import Cookies from "js-cookie";
 
-// Lembre-se: se mudou o backend para porta 3001, ajuste aqui!
 const api = axios.create({
   baseURL: "http://localhost:3000",
 });

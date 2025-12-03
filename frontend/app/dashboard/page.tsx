@@ -5,7 +5,6 @@ import api from "@/services/api";
 import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
 
-// Definimos o tipo de dado que vem do backend
 interface Document {
   id: string;
   filename: string;
@@ -20,14 +19,12 @@ export default function Dashboard() {
   const [file, setFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
 
-  // Proteção: Se não estiver logado, chuta para fora
   useEffect(() => {
     if (!loading && !isAuthenticated) {
       router.push("/");
     }
   }, [loading, isAuthenticated, router]);
 
-  // Função para buscar lista de documentos
   const fetchDocuments = async () => {
     try {
       const res = await api.get("/documents");
@@ -37,17 +34,14 @@ export default function Dashboard() {
     }
   };
 
-  // Carrega documentos assim que entrar na página
   useEffect(() => {
     if (isAuthenticated) fetchDocuments();
   }, [isAuthenticated]);
 
-  // Função de Upload
   const handleUpload = async () => {
     if (!file) return;
     setUploading(true);
 
-    // Upload de arquivo requer FormData
     const formData = new FormData();
     formData.append("file", file);
 
@@ -84,7 +78,6 @@ export default function Dashboard() {
           </button>
         </header>
 
-        {/* Área de Upload */}
         <div className="bg-white p-6 rounded shadow mb-8">
           <h2 className="text-xl font-semibold mb-4">Novo Upload</h2>
           <div className="flex gap-4 items-center">
@@ -104,7 +97,6 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* Lista de Documentos */}
         <div className="grid gap-4">
           {documents.length === 0 && (
             <p className="text-gray-500 text-center">
