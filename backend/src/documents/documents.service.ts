@@ -149,6 +149,7 @@ export class DocumentsService {
       id: document.id,
       llmSummary: document.llmSummary,
       extractedText: document.extractedText,
+      fileUrl: document.fileUrl,
     });
 
     return {
