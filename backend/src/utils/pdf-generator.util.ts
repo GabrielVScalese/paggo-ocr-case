@@ -7,6 +7,7 @@ interface PdfData {
   id: string;
   llmSummary: string | null;
   extractedText: string | null;
+  fileUrl: string | null; // Adicionado fileUrl para o link do Cloudinary
 }
 
 export async function generateDocumentReport(data: PdfData): Promise<Buffer> {
@@ -39,12 +40,41 @@ export async function generateDocumentReport(data: PdfData): Promise<Buffer> {
     doc.moveTo(50, doc.y).lineTo(550, doc.y).strokeColor('#aaaaaa').stroke();
     doc.moveDown(2);
 
-    // Resumo IA
+    // 1. Acesso ao Documento Original (Primeira Seção)
+    if (data.fileUrl) {
+      doc.fillColor('black');
+      doc
+        .fontSize(14)
+        .font('Helvetica-Bold')
+        .text('1. Acesso ao Documento Original');
+      doc.moveDown(0.5);
+
+      doc
+        .fontSize(11)
+        .font('Helvetica')
+        .text(
+          'Clique no link abaixo para visualizar ou fazer download do documento:',
+        );
+      doc.moveDown(0.5);
+
+      // Link clicável
+      doc
+        .fillColor('#0000FF') // Cor azul para parecer um link
+        .font('Helvetica-Bold')
+        .text('Acessar documento original', {
+          link: data.fileUrl,
+          underline: true,
+        });
+
+      doc.moveDown(2);
+    }
+
+    // 2. Resumo IA
     doc.fillColor('black');
     doc
       .fontSize(14)
       .font('Helvetica-Bold')
-      .text('1. Resumo da Inteligência Artificial');
+      .text('2. Resumo da Inteligência Artificial');
     doc.moveDown(0.5);
     doc
       .fontSize(11)
@@ -55,8 +85,8 @@ export async function generateDocumentReport(data: PdfData): Promise<Buffer> {
       });
     doc.moveDown(2);
 
-    // Texto Extraído
-    doc.fontSize(14).font('Helvetica-Bold').text('2. Texto Extraído (OCR)');
+    // 3. Texto Extraído
+    doc.fontSize(14).font('Helvetica-Bold').text('3. Texto Extraído (OCR)');
     doc.moveDown(0.5);
 
     // Uso de fonte monoespaçada (Courier) para o OCR parecer texto bruto
