@@ -185,7 +185,7 @@ export default function DocumentDetail() {
                   "O resumo ainda não foi gerado ou está indisponível."
                 ) : (
                   <span className="text-gray-400 italic">
-                    A carregar informações...
+                    Carregando informações...
                   </span>
                 )}
               </div>

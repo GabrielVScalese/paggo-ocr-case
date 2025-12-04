@@ -10,15 +10,23 @@ export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  // NOVO: Estado de carregamento do login
+  const [loadingLogin, setLoadingLogin] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError("");
+    setLoadingLogin(true); // Inicia o carregamento
+
     try {
       const response = await api.post("/auth/login", { email, password });
 
       login(response.data.access_token);
+      // O router.push ocorre dentro da função login, então não é necessário aqui
     } catch (err) {
       setError("Falha no login. Verifique as credenciais.");
+    } finally {
+      setLoadingLogin(false); // Finaliza o carregamento
     }
   };
 
@@ -38,6 +46,7 @@ export default function LoginPage() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
+            disabled={loadingLogin} // Desabilita durante o carregamento
           />
           <input
             type="password"
@@ -46,12 +55,15 @@ export default function LoginPage() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
+            disabled={loadingLogin} // Desabilita durante o carregamento
           />
           <button
             type="submit"
-            className="bg-blue-600 text-white p-2 rounded hover:bg-blue-700 font-bold"
+            className="bg-blue-600 text-white p-2 rounded hover:bg-blue-700 font-bold disabled:bg-gray-400 disabled:cursor-not-allowed"
+            disabled={loadingLogin} // Desabilita o botão
           >
-            Entrar
+            {/* Altera o texto baseado no estado de carregamento */}
+            {loadingLogin ? "Validando..." : "Entrar"}
           </button>
         </form>
 

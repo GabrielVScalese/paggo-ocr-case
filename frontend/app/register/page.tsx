@@ -9,15 +9,21 @@ export default function RegisterPage() {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  // NOVO: Estado para o carregamento do registro
+  const [loadingRegister, setLoadingRegister] = useState(false);
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
+    setLoadingRegister(true); // Inicia o carregamento
+
     try {
       await api.post("/auth/register", { email, password });
       alert("Conta criada com sucesso! Faça login.");
       router.push("/");
     } catch (err) {
       alert("Erro ao criar conta. Tente outro email.");
+    } finally {
+      setLoadingRegister(false); // Finaliza o carregamento
     }
   };
 
@@ -33,6 +39,7 @@ export default function RegisterPage() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
+            disabled={loadingRegister} // Desabilita durante o carregamento
           />
           <input
             type="password"
@@ -41,12 +48,15 @@ export default function RegisterPage() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
+            disabled={loadingRegister} // Desabilita durante o carregamento
           />
           <button
             type="submit"
-            className="bg-green-600 text-white p-2 rounded hover:bg-green-700 font-bold"
+            className="bg-green-600 text-white p-2 rounded hover:bg-green-700 font-bold disabled:bg-gray-400 disabled:cursor-not-allowed"
+            disabled={loadingRegister} // Desabilita o botão
           >
-            Cadastrar
+            {/* Altera o texto baseado no estado de carregamento */}
+            {loadingRegister ? "Cadastrando..." : "Cadastrar"}
           </button>
         </form>
         <Link

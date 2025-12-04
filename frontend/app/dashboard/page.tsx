@@ -18,6 +18,8 @@ export default function Dashboard() {
   const [documents, setDocuments] = useState<Document[]>([]);
   const [file, setFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
+  // NOVO: Estado para o carregamento dos documentos
+  const [loadingDocuments, setLoadingDocuments] = useState(true);
 
   useEffect(() => {
     if (!loading && !isAuthenticated) {
@@ -26,11 +28,16 @@ export default function Dashboard() {
   }, [loading, isAuthenticated, router]);
 
   const fetchDocuments = async () => {
+    // Inicia o carregamento
+    setLoadingDocuments(true);
     try {
       const res = await api.get("/documents");
       setDocuments(res.data);
     } catch (error) {
       console.error("Erro ao buscar documentos", error);
+    } finally {
+      // Finaliza o carregamento
+      setLoadingDocuments(false);
     }
   };
 
@@ -97,44 +104,51 @@ export default function Dashboard() {
           </div>
         </div>
 
-        <div className="grid gap-4">
-          {documents.length === 0 && (
-            <p className="text-gray-500 text-center">
-              Nenhum documento enviado ainda.
-            </p>
-          )}
+        {/* Exibe o carregamento enquanto os documentos estão sendo buscados */}
+        {loadingDocuments ? (
+          <p className="text-center mt-10 text-gray-600 font-medium">
+            Carregando documentos...
+          </p>
+        ) : (
+          <div className="grid gap-4">
+            {documents.length === 0 && (
+              <p className="text-gray-500 text-center">
+                Nenhum documento enviado ainda.
+              </p>
+            )}
 
-          {documents.map((doc) => (
-            <div
-              key={doc.id}
-              className="bg-white p-5 rounded shadow border-l-4 border-blue-500 hover:shadow-lg transition-shadow"
-            >
-              <div className="flex justify-between items-start">
-                <div>
-                  <h3 className="font-bold text-lg text-gray-800">
-                    {doc.filename}
-                  </h3>
-                  <p className="text-gray-500 text-sm">
-                    Enviado a: {new Date(doc.createdAt).toLocaleDateString()} às{" "}
-                    {new Date(doc.createdAt).toLocaleTimeString()}
-                  </p>
+            {documents.map((doc) => (
+              <div
+                key={doc.id}
+                className="bg-white p-5 rounded shadow border-l-4 border-blue-500 hover:shadow-lg transition-shadow"
+              >
+                <div className="flex justify-between items-start">
+                  <div>
+                    <h3 className="font-bold text-lg text-gray-800">
+                      {doc.filename}
+                    </h3>
+                    <p className="text-gray-500 text-sm">
+                      Enviado a: {new Date(doc.createdAt).toLocaleDateString()}{" "}
+                      às {new Date(doc.createdAt).toLocaleTimeString()}
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => router.push(`/dashboard/${doc.id}`)}
+                    className="text-white bg-blue-500 hover:bg-blue-600 px-3 py-1 rounded text-sm"
+                  >
+                    Ver Detalhes & Chat
+                  </button>
                 </div>
-                <button
-                  onClick={() => router.push(`/dashboard/${doc.id}`)}
-                  className="text-white bg-blue-500 hover:bg-blue-600 px-3 py-1 rounded text-sm"
-                >
-                  Ver Detalhes & Chat
-                </button>
+                <div className="mt-3 bg-gray-50 p-3 rounded text-sm text-gray-700">
+                  <strong>Resumo Inicial:</strong>{" "}
+                  {doc.llmSummary
+                    ? doc.llmSummary.substring(0, 150) + "..."
+                    : "A processar..."}
+                </div>
               </div>
-              <div className="mt-3 bg-gray-50 p-3 rounded text-sm text-gray-700">
-                <strong>Resumo Inicial:</strong>{" "}
-                {doc.llmSummary
-                  ? doc.llmSummary.substring(0, 150) + "..."
-                  : "A processar..."}
-              </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );
