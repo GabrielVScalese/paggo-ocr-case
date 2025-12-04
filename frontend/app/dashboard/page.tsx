@@ -71,9 +71,7 @@ export default function Dashboard() {
     <div className="min-h-screen bg-gray-50 p-8 text-black">
       <div className="max-w-4xl mx-auto">
         <header className="flex justify-between items-center mb-8 border-b pb-4">
-          <h1 className="text-3xl font-bold text-gray-800">
-            Os Meus Documentos
-          </h1>
+          <h1 className="text-3xl font-bold text-gray-800">Meus Documentos</h1>
           <button
             onClick={logout}
             className="text-red-500 hover:text-red-700 font-semibold border border-red-200 px-4 py-1 rounded cursor-pointer"
