@@ -4,14 +4,13 @@ import { useEffect, useState } from "react";
 import api from "@/services/api";
 import { useParams, useRouter } from "next/navigation";
 
-// Interface atualizada
 interface DocumentDetail {
   id: string;
   filename: string;
   createdAt: string;
   llmSummary: string;
   extractedText: string;
-  fileUrl: string; // URL pública do Cloudinary (ou outro storage)
+  fileUrl: string;
 }
 
 export default function DocumentDetail() {
@@ -64,7 +63,7 @@ export default function DocumentDetail() {
     }
   };
 
-  // Função de Download do PDF de ANÁLISE
+  // Função de download do PDF de Análise
   const handleDownload = async () => {
     try {
       const response = await api.get(`/documents/${id}/download`, {
@@ -88,9 +87,7 @@ export default function DocumentDetail() {
   };
 
   return (
-    // Removendo o padding da div mais externa
     <div className="min-h-screen bg-gray-50 text-black">
-      {/* Aumentando o padding (px-8 py-8) e a largura máxima (max-w-7xl) */}
       <div className="max-w-7xl mx-auto px-8 py-8">
         <button
           onClick={() => router.back()}
@@ -99,14 +96,12 @@ export default function DocumentDetail() {
           <span>←</span> Voltar para a lista
         </button>
 
-        {/* ÁREA SUPERIOR: Título, Metadados e Botão de Download */}
         <div className="flex justify-between items-center mb-6">
           <div>
             <h1 className="text-3xl font-bold text-gray-800">
               Detalhes do Documento
             </h1>
             {documentData && (
-              // Metadados + Link de Acesso como subtítulo
               <div className="text-gray-500 text-sm mt-1 flex flex-wrap items-center gap-x-4">
                 <p>
                   Arquivo: <strong>{documentData.filename}</strong> • Enviado
@@ -133,17 +128,12 @@ export default function DocumentDetail() {
           </button>
         </div>
 
-        {/* -------------------------------------------------------- */}
-        {/* NOVO LAYOUT DE DUAS SEÇÕES VERTICAIS: RESUMO E CHAT */}
         <div className="flex flex-col gap-6">
-          {/* 1. RESUMO DA IA (Nova Seção Superior) */}
           <div className="bg-white p-6 rounded shadow border-l-4 border-purple-500 flex-shrink-0">
             <h2 className="text-xl font-bold mb-4 text-gray-800 flex items-center gap-2">
               🤖 Resumo Completo da Análise
             </h2>
             <div className="bg-gray-50 p-4 rounded text-gray-700 leading-relaxed whitespace-pre-wrap border border-gray-100 max-h-[300px] overflow-y-auto">
-              {" "}
-              {/* Altura limitada para não ser muito longo */}
               {documentData ? (
                 documentData.llmSummary ||
                 "O resumo ainda não foi gerado ou está indisponível."
@@ -155,14 +145,10 @@ export default function DocumentDetail() {
             </div>
           </div>
 
-          {/* 2. CHAT INTERATIVO (Nova Seção Inferior) */}
           <div className="bg-white p-6 rounded shadow flex flex-col gap-4 border border-gray-200 h-full min-h-[calc(100vh-550px)]">
-            {" "}
-            {/* Altura ajustada */}
             <h2 className="text-xl font-bold text-gray-800 border-b pb-2">
               💬 Chat Interativo
             </h2>
-            {/* HISTÓRICO DO CHAT: Ocupa o espaço restante e é SCROLLÁVEL */}
             <div className="flex-grow overflow-y-auto pr-2">
               {chatHistory.length === 0 && (
                 <div className="text-center mt-10 text-gray-400">
@@ -186,7 +172,6 @@ export default function DocumentDetail() {
                 </div>
               ))}
             </div>
-            {/* INPUT BAR FIXO */}
             <div className="flex gap-2 p-2 rounded border border-gray-200 -mx-6 -mb-6 bg-white shadow-md">
               <input
                 className="flex-1 border-none p-3 outline-none focus:ring-0 text-gray-700"

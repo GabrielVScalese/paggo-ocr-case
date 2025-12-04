@@ -44,19 +44,13 @@ export class DocumentsController {
   )
   async create(@UploadedFile() file: Express.Multer.File, @Req() req) {
     const userId = req.user.id;
-
-    // 1. Envia para o Cloudinary
     const publicUrl = await this.cloudinaryService.uploadFile(file);
-
-    // 2. Prepara os dados para salvar no banco
     const fileData = {
       ...file,
-      path: publicUrl, // A URL do Cloudinary
+      path: publicUrl,
       filename: file.originalname,
     };
 
-    // 3. Salva no banco e faz o OCR
-    // @ts-ignore
     return this.documentsService.create(fileData, userId);
   }
 
@@ -84,7 +78,6 @@ export class DocumentsController {
     @Res() res: express.Response,
   ) {
     const userId = req.user.id;
-
     const downloadData = await this.documentsService.downloadDocument(
       documentId,
       userId,

@@ -126,7 +126,7 @@ export class DocumentsService {
     return this.prisma.document.create({
       data: {
         filename: file.originalname,
-        fileUrl: file.path, // Caminho no disco
+        fileUrl: file.path,
         extractedText: extractedText,
         llmSummary: llmSummary,
         userId: userId,

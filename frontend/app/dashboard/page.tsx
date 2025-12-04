@@ -18,7 +18,6 @@ export default function Dashboard() {
   const [documents, setDocuments] = useState<Document[]>([]);
   const [file, setFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
-  // NOVO: Estado para o carregamento dos documentos
   const [loadingDocuments, setLoadingDocuments] = useState(true);
 
   useEffect(() => {
@@ -28,15 +27,14 @@ export default function Dashboard() {
   }, [loading, isAuthenticated, router]);
 
   const fetchDocuments = async () => {
-    // Inicia o carregamento
     setLoadingDocuments(true);
+
     try {
       const res = await api.get("/documents");
       setDocuments(res.data);
     } catch (error) {
       console.error("Erro ao buscar documentos", error);
     } finally {
-      // Finaliza o carregamento
       setLoadingDocuments(false);
     }
   };
@@ -58,7 +56,7 @@ export default function Dashboard() {
       });
       alert("Documento enviado e processado!");
       setFile(null);
-      fetchDocuments(); // Atualiza a lista na hora
+      fetchDocuments();
     } catch (error) {
       alert("Erro no upload. Verifique o backend.");
     } finally {
@@ -66,7 +64,6 @@ export default function Dashboard() {
     }
   };
 
-  // Mostra "Carregando" enquanto verifica o login
   if (loading || !isAuthenticated)
     return <p className="text-center mt-10 text-black">A carregar...</p>;
 
@@ -104,7 +101,6 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* Exibe o carregamento enquanto os documentos estão sendo buscados */}
         {loadingDocuments ? (
           <p className="text-center mt-10 text-gray-600 font-medium">
             Carregando documentos...

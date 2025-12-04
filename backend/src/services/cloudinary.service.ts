@@ -20,12 +20,10 @@ export class CloudinaryService {
           resource_type: 'auto',
         },
         (error, result) => {
-          // 1. Caso de erro claro (rede, API key inválida, etc.)
           if (error) {
             return reject(error);
           }
 
-          // 2. Verificação Defensiva: Garante que o objeto de resultado existe
           if (!result || !result.secure_url) {
             return reject(
               new Error(
@@ -34,7 +32,6 @@ export class CloudinaryService {
             );
           }
 
-          // Se tudo deu certo, resolve com a URL
           resolve(result.secure_url);
         },
       );
