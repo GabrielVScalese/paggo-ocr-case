@@ -24,12 +24,12 @@ export async function generateDocumentReport(data: PdfData): Promise<Buffer> {
     doc
       .fontSize(20)
       .font('Helvetica-Bold')
-      .text('Relatório de Análise Paggo', { align: 'center' });
+      .text('Relatório de Análise', { align: 'center' });
     doc.moveDown();
 
     // Informações do Arquivo (Metadados)
     doc.fontSize(10).font('Helvetica').fillColor('#555555');
-    doc.text(`Ficheiro Original: ${data.filename}`);
+    doc.text(`Documento Original: ${data.filename}`);
     doc.text(
       `Data de Processamento: ${data.createdAt.toLocaleString('pt-PT')}`,
     );
