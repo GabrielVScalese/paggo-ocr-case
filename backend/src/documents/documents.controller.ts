@@ -13,15 +13,19 @@ import {
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { DocumentsService } from './documents.service';
-import { diskStorage } from 'multer';
+import { memoryStorage } from 'multer';
 import { extname } from 'path';
 import { AuthGuard } from '@nestjs/passport';
 import { DocumentQueryDto } from './dto/document-query.dto';
 import express from 'express';
+import { CloudinaryService } from 'src/services/cloudinary.service';
 
 @Controller('documents')
 export class DocumentsController {
-  constructor(private readonly documentsService: DocumentsService) {}
+  constructor(
+    private readonly documentsService: DocumentsService,
+    private readonly cloudinaryService: CloudinaryService,
+  ) {}
 
   @Get()
   @UseGuards(AuthGuard('jwt'))
@@ -35,22 +39,25 @@ export class DocumentsController {
   @UseGuards(AuthGuard('jwt'))
   @UseInterceptors(
     FileInterceptor('file', {
-      storage: diskStorage({
-        destination: './uploads',
-        filename: (req, file, callback) => {
-          const uniqueSuffix =
-            Date.now() + '-' + Math.round(Math.random() * 1e9);
-          const ext = extname(file.originalname);
-          callback(null, `${file.fieldname}-${uniqueSuffix}${ext}`);
-        },
-      }),
+      storage: memoryStorage(), // Guarda na RAM para enviar ao Cloudinary
     }),
   )
-  create(@UploadedFile() file: Express.Multer.File, @Req() req) {
-    // req.user foi populado pelo JWT
+  async create(@UploadedFile() file: Express.Multer.File, @Req() req) {
     const userId = req.user.id;
 
-    return this.documentsService.create(file, userId);
+    // 1. Envia para o Cloudinary
+    const publicUrl = await this.cloudinaryService.uploadFile(file);
+
+    // 2. Prepara os dados para salvar no banco
+    const fileData = {
+      ...file,
+      path: publicUrl, // A URL do Cloudinary
+      filename: file.originalname,
+    };
+
+    // 3. Salva no banco e faz o OCR
+    // @ts-ignore
+    return this.documentsService.create(fileData, userId);
   }
 
   @Post(':id/query')

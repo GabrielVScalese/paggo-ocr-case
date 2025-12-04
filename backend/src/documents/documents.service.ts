@@ -24,7 +24,8 @@ export class DocumentsService {
         filename: true,
         createdAt: true,
         llmSummary: true,
-        // Não incluir o 'extractedText' completo na lista para manter a resposta leve
+        fileUrl: true,
+        extractedText: true,
       },
     });
   }
