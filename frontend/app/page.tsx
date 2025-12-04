@@ -33,7 +33,7 @@ export default function LoginPage() {
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-gray-100 text-black">
       <div className="bg-white p-8 rounded shadow-md w-96">
-        <h1 className="text-2xl font-bold mb-4 text-center">Login Paggo</h1>
+        <h1 className="text-2xl font-bold mb-4 text-center">Login</h1>
         {error && (
           <p className="text-red-500 mb-4 text-sm text-center">{error}</p>
         )}

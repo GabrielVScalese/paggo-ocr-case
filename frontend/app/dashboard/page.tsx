@@ -99,7 +99,7 @@ export default function Dashboard() {
               disabled={!file || uploading}
               className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 disabled:bg-gray-400 font-bold whitespace-nowrap"
             >
-              {uploading ? "A enviar..." : "Enviar"}
+              {uploading ? "Enviando..." : "Enviar"}
             </button>
           </div>
         </div>
