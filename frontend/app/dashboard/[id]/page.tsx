@@ -87,62 +87,11 @@ export default function DocumentDetail() {
     }
   };
 
-  // --- FUNÇÃO DE PRÉ-VISUALIZAÇÃO DO ARQUIVO ORIGINAL ---
-  const renderDocumentPreview = () => {
-    if (!documentData || !documentData.fileUrl) {
-      return (
-        <div className="text-gray-400 italic mt-4">
-          URL do documento indisponível.
-        </div>
-      );
-    }
-
-    const fileUrl = documentData.fileUrl;
-    const isPdf = fileUrl.toLowerCase().includes(".pdf");
-
-    return (
-      <div className="bg-white p-4 rounded shadow border border-gray-200 flex-shrink-0">
-        <h2 className="text-lg font-bold mb-3 text-gray-800 flex items-center gap-2">
-          🖼️ Pré-visualização do Original
-        </h2>
-        <div className="border rounded overflow-hidden bg-gray-100 flex justify-center max-h-[450px]">
-          {isPdf ? (
-            // Usa iframe para PDF
-            <iframe
-              src={fileUrl}
-              className="w-full h-[450px] border-0"
-              title={`Documento: ${documentData.filename}`}
-            />
-          ) : (
-            // Usa <img> para Imagens
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={fileUrl}
-              alt={`Documento: ${documentData.filename}`}
-              className="max-w-full h-auto max-h-[450px] object-contain"
-            />
-          )}
-        </div>
-        <div className="mt-3 text-right">
-          <a
-            href={fileUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-blue-600 hover:underline text-xs"
-          >
-            Abrir arquivo original ↗
-          </a>
-        </div>
-      </div>
-    );
-  };
-  // -------------------------------------------------------------------
-
   return (
     // Removendo o padding da div mais externa
     <div className="min-h-screen bg-gray-50 text-black">
-      {/* Adicionando w-full para preencher a largura e p-8 para o padding da página */}
-      <div className="w-full mx-auto px-8 py-8">
+      {/* Aumentando o padding (px-8 py-8) e a largura máxima (max-w-7xl) */}
+      <div className="max-w-7xl mx-auto px-8 py-8">
         <button
           onClick={() => router.back()}
           className="mb-4 text-gray-500 hover:text-black font-medium flex items-center gap-2"
@@ -150,16 +99,30 @@ export default function DocumentDetail() {
           <span>←</span> Voltar para a lista
         </button>
 
+        {/* ÁREA SUPERIOR: Título, Metadados e Botão de Download */}
         <div className="flex justify-between items-center mb-6">
           <div>
             <h1 className="text-3xl font-bold text-gray-800">
               Detalhes do Documento
             </h1>
             {documentData && (
-              <p className="text-gray-500 text-sm mt-1">
-                Arquivo: <strong>{documentData.filename}</strong> • Enviado em:{" "}
-                {new Date(documentData.createdAt).toLocaleDateString()}
-              </p>
+              // Metadados + Link de Acesso como subtítulo
+              <div className="text-gray-500 text-sm mt-1 flex flex-wrap items-center gap-x-4">
+                <p>
+                  Arquivo: <strong>{documentData.filename}</strong> • Enviado
+                  em: {new Date(documentData.createdAt).toLocaleDateString()}
+                </p>
+                {documentData.fileUrl && (
+                  <a
+                    href={documentData.fileUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-600 hover:underline font-medium flex items-center gap-1 mt-1 lg:mt-0"
+                  >
+                    🔗 Acessar Documento Original ↗
+                  </a>
+                )}
+              </div>
             )}
           </div>
           <button
@@ -170,85 +133,76 @@ export default function DocumentDetail() {
           </button>
         </div>
 
-        {/* --- LAYOUT DE TRÊS COLUNAS (3:6:3) --- */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-          {/* COLUNA 1 (Esquerda): RESUMO DA IA (lg:col-span-3) */}
-          <div className="lg:col-span-3">
-            {/* 1. RESUMO DA IA (Com altura aumentada) */}
-            <div className="bg-white p-6 rounded shadow border-l-4 border-purple-500 flex-shrink-0">
-              <h2 className="text-xl font-bold mb-4 text-gray-800 flex items-center gap-2">
-                🤖 Resumo Completo da Análise
-              </h2>
-              <div className="bg-gray-50 p-4 rounded text-gray-700 leading-relaxed whitespace-pre-wrap border border-gray-100 max-h-[500px] overflow-y-auto">
-                {documentData ? (
-                  documentData.llmSummary ||
-                  "O resumo ainda não foi gerado ou está indisponível."
-                ) : (
-                  <span className="text-gray-400 italic">
-                    Carregando informações...
-                  </span>
-                )}
-              </div>
+        {/* -------------------------------------------------------- */}
+        {/* NOVO LAYOUT DE DUAS SEÇÕES VERTICAIS: RESUMO E CHAT */}
+        <div className="flex flex-col gap-6">
+          {/* 1. RESUMO DA IA (Nova Seção Superior) */}
+          <div className="bg-white p-6 rounded shadow border-l-4 border-purple-500 flex-shrink-0">
+            <h2 className="text-xl font-bold mb-4 text-gray-800 flex items-center gap-2">
+              🤖 Resumo Completo da Análise
+            </h2>
+            <div className="bg-gray-50 p-4 rounded text-gray-700 leading-relaxed whitespace-pre-wrap border border-gray-100 max-h-[300px] overflow-y-auto">
+              {" "}
+              {/* Altura limitada para não ser muito longo */}
+              {documentData ? (
+                documentData.llmSummary ||
+                "O resumo ainda não foi gerado ou está indisponível."
+              ) : (
+                <span className="text-gray-400 italic">
+                  Carregando informações...
+                </span>
+              )}
             </div>
           </div>
 
-          {/* COLUNA 2 (Centro): CHAT INTERATIVO (lg:col-span-6) */}
-          <div className="lg:col-span-6">
-            <div className="bg-white p-6 rounded shadow flex flex-col gap-4 border border-gray-200 h-full min-h-[calc(100vh-200px)]">
-              <h2 className="text-xl font-bold text-gray-800 border-b pb-2">
-                💬 Chat Interativo
-              </h2>
+          {/* 2. CHAT INTERATIVO (Nova Seção Inferior) */}
+          <div className="bg-white p-6 rounded shadow flex flex-col gap-4 border border-gray-200 h-full min-h-[calc(100vh-550px)]">
+            {" "}
+            {/* Altura ajustada */}
+            <h2 className="text-xl font-bold text-gray-800 border-b pb-2">
+              💬 Chat Interativo
+            </h2>
+            {/* HISTÓRICO DO CHAT: Ocupa o espaço restante e é SCROLLÁVEL */}
+            <div className="flex-grow overflow-y-auto pr-2">
+              {chatHistory.length === 0 && (
+                <div className="text-center mt-10 text-gray-400">
+                  <p className="text-lg">Tem dúvidas sobre este documento?</p>
+                  <p className="text-sm">Pergunte algo abaixo.</p>
+                </div>
+              )}
 
-              {/* HISTÓRICO DO CHAT: Ocupa o espaço restante e é SCROLLÁVEL */}
-              <div className="flex-grow overflow-y-auto pr-2 max-h-[calc(100vh-350px)]">
-                {chatHistory.length === 0 && (
-                  <div className="text-center mt-10 text-gray-400">
-                    <p className="text-lg">Tem dúvidas sobre este documento?</p>
-                    <p className="text-sm">
-                      Pergunte algo abaixo (ex: "Qual o valor do imposto?").
-                    </p>
-                  </div>
-                )}
-
-                {chatHistory.map((chat, i) => (
-                  <div key={i} className="flex flex-col gap-2 mb-4">
-                    <div className="self-end max-w-[80%]">
-                      <div className="bg-blue-600 text-white px-4 py-2 rounded-t-lg rounded-bl-lg shadow text-sm">
-                        {chat.q}
-                      </div>
-                    </div>
-                    <div className="self-start max-w-[80%]">
-                      <div className="bg-gray-100 text-gray-800 px-4 py-2 rounded-t-lg rounded-br-lg shadow border text-sm whitespace-pre-wrap">
-                        {chat.a}
-                      </div>
+              {chatHistory.map((chat, i) => (
+                <div key={i} className="flex flex-col gap-2 mb-4">
+                  <div className="self-end max-w-[80%]">
+                    <div className="bg-blue-600 text-white px-4 py-2 rounded-t-lg rounded-bl-lg shadow text-sm">
+                      {chat.q}
                     </div>
                   </div>
-                ))}
-              </div>
-
-              {/* INPUT BAR FIXO */}
-              <div className="flex gap-2 p-2 rounded border border-gray-200 -mx-6 -mb-6 bg-white shadow-md">
-                <input
-                  className="flex-1 border-none p-3 outline-none focus:ring-0 text-gray-700"
-                  placeholder="Faça uma pergunta sobre o documento..."
-                  value={question}
-                  onChange={(e) => setQuestion(e.target.value)}
-                  onKeyDown={(e) => e.key === "Enter" && handleAsk()}
-                />
-                <button
-                  onClick={handleAsk}
-                  disabled={loadingAnswer || !question}
-                  className="bg-blue-600 text-white px-6 rounded hover:bg-blue-700 disabled:bg-gray-300 font-bold transition-colors shadow-sm"
-                >
-                  {loadingAnswer ? "Pensando..." : "Enviar"}
-                </button>
-              </div>
+                  <div className="self-start max-w-[80%]">
+                    <div className="bg-gray-100 text-gray-800 px-4 py-2 rounded-t-lg rounded-br-lg shadow border text-sm whitespace-pre-wrap">
+                      {chat.a}
+                    </div>
+                  </div>
+                </div>
+              ))}
             </div>
-          </div>
-
-          {/* COLUNA 3 (Direita): PRÉ-VISUALIZAÇÃO (lg:col-span-3) */}
-          <div className="lg:col-span-3 flex flex-col gap-6">
-            {renderDocumentPreview()}
+            {/* INPUT BAR FIXO */}
+            <div className="flex gap-2 p-2 rounded border border-gray-200 -mx-6 -mb-6 bg-white shadow-md">
+              <input
+                className="flex-1 border-none p-3 outline-none focus:ring-0 text-gray-700"
+                placeholder="Faça uma pergunta sobre o documento..."
+                value={question}
+                onChange={(e) => setQuestion(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && handleAsk()}
+              />
+              <button
+                onClick={handleAsk}
+                disabled={loadingAnswer || !question}
+                className="bg-blue-600 text-white px-6 rounded hover:bg-blue-700 disabled:bg-gray-300 font-bold transition-colors shadow-sm"
+              >
+                {loadingAnswer ? "Pensando..." : "Enviar"}
+              </button>
+            </div>
           </div>
         </div>
       </div>
