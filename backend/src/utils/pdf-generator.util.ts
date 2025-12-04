@@ -30,7 +30,7 @@ export async function generateDocumentReport(data: PdfData): Promise<Buffer> {
     doc.fontSize(10).font('Helvetica').fillColor('#555555');
     doc.text(`Documento Original: ${data.filename}`);
     doc.text(
-      `Data de Processamento: ${data.createdAt.toLocaleString('pt-PT')}`,
+      `Data de Processamento: ${data.createdAt.toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo' })}`,
     );
     doc.text(`ID do Documento: ${data.id}`);
     doc.moveDown();
