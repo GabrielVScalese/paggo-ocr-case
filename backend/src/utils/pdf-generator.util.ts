@@ -1,13 +1,12 @@
 import PDFDocument = require('pdfkit');
 
-// Interface para saber exatamente o que o gerador precisa
 interface PdfData {
   filename: string;
   createdAt: Date;
   id: string;
   llmSummary: string | null;
   extractedText: string | null;
-  fileUrl: string | null; // Adicionado fileUrl para o link do Cloudinary
+  fileUrl: string | null;
 }
 
 export async function generateDocumentReport(data: PdfData): Promise<Buffer> {
@@ -40,7 +39,6 @@ export async function generateDocumentReport(data: PdfData): Promise<Buffer> {
     doc.moveTo(50, doc.y).lineTo(550, doc.y).strokeColor('#aaaaaa').stroke();
     doc.moveDown(2);
 
-    // 1. Acesso ao Documento Original (Primeira Seção)
     if (data.fileUrl) {
       doc.fillColor('black');
       doc
@@ -59,7 +57,7 @@ export async function generateDocumentReport(data: PdfData): Promise<Buffer> {
 
       // Link clicável
       doc
-        .fillColor('#0000FF') // Cor azul para parecer um link
+        .fillColor('#0000FF')
         .font('Helvetica-Bold')
         .text('Acessar documento original', {
           link: data.fileUrl,
@@ -69,7 +67,6 @@ export async function generateDocumentReport(data: PdfData): Promise<Buffer> {
       doc.moveDown(2);
     }
 
-    // 2. Resumo IA
     doc.fillColor('black');
     doc
       .fontSize(14)
