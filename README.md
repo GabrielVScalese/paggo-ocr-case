@@ -74,30 +74,3 @@ pnpm dev
 # or
 bun dev
 ```
-
-## Compile and run the project
-
-### Backend
-
-```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
-```
-
-### Frontend
-
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
