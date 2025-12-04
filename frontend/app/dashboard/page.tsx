@@ -76,7 +76,7 @@ export default function Dashboard() {
           </h1>
           <button
             onClick={logout}
-            className="text-red-500 hover:text-red-700 font-semibold border border-red-200 px-4 py-1 rounded"
+            className="text-red-500 hover:text-red-700 font-semibold border border-red-200 px-4 py-1 rounded cursor-pointer"
           >
             Sair
           </button>
@@ -89,12 +89,12 @@ export default function Dashboard() {
               type="file"
               accept="image/*, application/pdf"
               onChange={(e) => setFile(e.target.files?.[0] || null)}
-              className="border p-2 rounded w-full file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+              className="border p-2 rounded w-full file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer"
             />
             <button
               onClick={handleUpload}
               disabled={!file || uploading}
-              className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 disabled:bg-gray-400 font-bold whitespace-nowrap"
+              className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 disabled:bg-gray-400 font-bold whitespace-nowrap cursor-pointer disabled:cursor-not-allowed"
             >
               {uploading ? "Enviando..." : "Enviar"}
             </button>
@@ -130,7 +130,7 @@ export default function Dashboard() {
                   </div>
                   <button
                     onClick={() => router.push(`/dashboard/${doc.id}`)}
-                    className="text-white bg-blue-500 hover:bg-blue-600 px-3 py-1 rounded text-sm"
+                    className="text-white bg-blue-500 hover:bg-blue-600 px-3 py-1 rounded text-sm cursor-pointer"
                   >
                     Ver Detalhes & Chat
                   </button>

@@ -57,7 +57,7 @@ export default function LoginPage() {
           />
           <button
             type="submit"
-            className="bg-blue-600 text-white p-2 rounded hover:bg-blue-700 font-bold disabled:bg-gray-400 disabled:cursor-not-allowed"
+            className="bg-blue-600 text-white p-2 rounded hover:bg-blue-700 font-bold disabled:bg-gray-400 disabled:cursor-not-allowed cursor-pointer"
             disabled={loadingLogin}
           >
             {loadingLogin ? "Validando..." : "Entrar"}

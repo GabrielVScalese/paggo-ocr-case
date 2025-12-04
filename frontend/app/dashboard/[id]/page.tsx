@@ -91,7 +91,7 @@ export default function DocumentDetail() {
       <div className="max-w-7xl mx-auto px-8 py-8">
         <button
           onClick={() => router.back()}
-          className="mb-4 text-gray-500 hover:text-black font-medium flex items-center gap-2"
+          className="mb-4 text-gray-500 hover:text-black font-medium flex items-center gap-2 cursor-pointer"
         >
           <span>←</span> Voltar para a lista
         </button>
@@ -122,7 +122,7 @@ export default function DocumentDetail() {
           </div>
           <button
             onClick={handleDownload}
-            className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 font-bold text-sm flex items-center gap-2 shadow-sm"
+            className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 font-bold text-sm flex items-center gap-2 shadow-sm cursor-pointer"
           >
             📄 Baixar PDF de Análise
           </button>
@@ -183,7 +183,7 @@ export default function DocumentDetail() {
               <button
                 onClick={handleAsk}
                 disabled={loadingAnswer || !question}
-                className="bg-blue-600 text-white px-6 rounded hover:bg-blue-700 disabled:bg-gray-300 font-bold transition-colors shadow-sm"
+                className="bg-blue-600 text-white px-6 rounded hover:bg-blue-700 disabled:bg-gray-300 font-bold transition-colors shadow-sm cursor-pointer  disabled:cursor-not-allowed"
               >
                 {loadingAnswer ? "Pensando..." : "Enviar"}
               </button>

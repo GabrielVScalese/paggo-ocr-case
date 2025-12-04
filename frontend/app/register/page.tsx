@@ -51,7 +51,7 @@ export default function RegisterPage() {
           />
           <button
             type="submit"
-            className="bg-green-600 text-white p-2 rounded hover:bg-green-700 font-bold disabled:bg-gray-400 disabled:cursor-not-allowed"
+            className="bg-green-600 text-white p-2 rounded hover:bg-green-700 font-bold disabled:bg-gray-400 disabled:cursor-not-allowed cursor-pointer"
             disabled={loadingRegister}
           >
             {loadingRegister ? "Cadastrando..." : "Cadastrar"}
