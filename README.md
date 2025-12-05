@@ -1,6 +1,7 @@
 # Paggo OCR Case
 
 This project is a solution for the case proposed by Paggo.
+
 Response Delay: As the backend is hosted on a free cloud service, some functionalities might take longer to respond.
 OCR Technology: The system applies OCR technology only for image documents.
 
