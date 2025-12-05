@@ -2,6 +2,10 @@
 
 This project is a solution for the case proposed by Paggo.
 
+Response Delay: As the backend is hosted on a free cloud service, some functionalities might take longer to respond.
+
+OCR Technology: The system applies OCR technology only for image documents.
+
 ## Necessary Services
 
 This project utilized the Groq service for LLM (Large Language Model) usage and the Cloudinary service for document storage. So, you must sign up at https://groq.com/ and https://cloudinary.com/ to create the API keys.
