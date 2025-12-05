@@ -17,6 +17,7 @@ export default function RegisterPage() {
 
     try {
       await api.post("/auth/register", { email, password });
+
       alert("Conta criada com sucesso! Faça login.");
       router.push("/");
     } catch (err) {

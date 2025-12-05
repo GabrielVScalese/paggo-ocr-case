@@ -18,7 +18,6 @@ export default function DocumentDetail() {
   const router = useRouter();
 
   const [documentData, setDocumentData] = useState<DocumentDetail | null>(null);
-
   const [question, setQuestion] = useState("");
   const [chatHistory, setChatHistory] = useState<{ q: string; a: string }[]>(
     []
@@ -51,6 +50,7 @@ export default function DocumentDetail() {
   // Função para perguntar ao Chat
   const handleAsk = async () => {
     if (!question) return;
+
     setLoadingAnswer(true);
     try {
       const res = await api.post(`/documents/${id}/query`, { question });
@@ -124,14 +124,14 @@ export default function DocumentDetail() {
             onClick={handleDownload}
             className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 font-bold text-sm flex items-center gap-2 shadow-sm cursor-pointer"
           >
-            📄 Baixar PDF de Análise
+            Baixar PDF de Análise
           </button>
         </div>
 
         <div className="flex flex-col gap-6">
           <div className="bg-white p-6 rounded shadow border-l-4 border-purple-500 flex-shrink-0">
             <h2 className="text-xl font-bold mb-4 text-gray-800 flex items-center gap-2">
-              🤖 Resumo Completo da Análise
+              Resumo Completo da Análise
             </h2>
             <div className="bg-gray-50 p-4 rounded text-gray-700 leading-relaxed whitespace-pre-wrap border border-gray-100 max-h-[300px] overflow-y-auto">
               {documentData ? (
@@ -147,7 +147,7 @@ export default function DocumentDetail() {
 
           <div className="bg-white p-6 rounded shadow flex flex-col gap-4 border border-gray-200 h-full min-h-[calc(100vh-550px)]">
             <h2 className="text-xl font-bold text-gray-800 border-b pb-2">
-              💬 Chat Interativo
+              Chat Interativo
             </h2>
             <div className="flex-grow overflow-y-auto pr-2">
               {chatHistory.length === 0 && (

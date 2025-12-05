@@ -54,6 +54,7 @@ export default function Dashboard() {
       await api.post("/documents/upload", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
+
       alert("Documento enviado e processado!");
       setFile(null);
       fetchDocuments();
