@@ -82,7 +82,7 @@ export async function generateDocumentReport(data: PdfData): Promise<Buffer> {
       });
     doc.moveDown(2);
 
-    // 3. Texto Extraído
+    // Texto Extraído
     doc.fontSize(14).font('Helvetica-Bold').text('3. Texto Extraído (OCR)');
     doc.moveDown(0.5);
 
